@@ -2,7 +2,7 @@ class Gramformer:
 
   def __init__(self, models=1, use_gpu=False):
     from transformers import AutoTokenizer
-    from transformers import AutoModelForSeq2SeqLM
+    from transformers import TFAutoModelForSequenceClassification
     from lm_scorer.models.auto import AutoLMScorer as LMScorer
     import errant
     import spacy
@@ -22,7 +22,7 @@ class Gramformer:
 
     if models == 1:
         self.correction_tokenizer = AutoTokenizer.from_pretrained(correction_model_tag)
-        self.correction_model     = AutoModelForSeq2SeqLM.from_pretrained(correction_model_tag)
+        self.correction_model     = TFAutoModelForSequenceClassification.from_pretrained(correction_model_tag)
         self.correction_model     = self.correction_model.to(device)
         self.model_loaded = True
         print("[Gramformer] Grammar error correct/highlight model loaded..")
