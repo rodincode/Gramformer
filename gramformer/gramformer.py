@@ -1,14 +1,16 @@
+import spacy
+import en_core_web_sm
+nlp = spacy.load('en_core_web_sm')
 class Gramformer:
 
   def __init__(self, models=1, use_gpu=False):
     from transformers import AutoTokenizer
-    from transformers import TFAutoModelForSequenceClassification
+    from transformers import AutoModelForSeq2SeqLM
     from lm_scorer.models.auto import AutoLMScorer as LMScorer
     import errant
     import spacy
-    nlp = spacy.load('en')
+    #nlp = spacy.load('en')
     self.annotator = errant.load('en', nlp)
-    #self.annotator = errant.load('en')
     
     if use_gpu:
         device= "cuda:0"
@@ -17,12 +19,12 @@ class Gramformer:
     batch_size = 1    
     self.scorer = LMScorer.from_pretrained("gpt2", device=device, batch_size=batch_size)    
     self.device    = device
-    correction_model_tag = "prithivida/grammar_error_correcter_v1"
+    correction_model_tag = "prithivida/grammar_error_correcter_v1" #"t5-base"
     self.model_loaded = False
 
     if models == 1:
         self.correction_tokenizer = AutoTokenizer.from_pretrained(correction_model_tag)
-        self.correction_model     = TFAutoModelForSequenceClassification.from_pretrained(correction_model_tag)
+        self.correction_model     = AutoModelForSeq2SeqLM.from_pretrained(correction_model_tag)
         self.correction_model     = self.correction_model.to(device)
         self.model_loaded = True
         print("[Gramformer] Grammar error correct/highlight model loaded..")
